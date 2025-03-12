@@ -4,7 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-day_df = pd.read_csv("../data/day.csv")
+day_df = pd.read_csv("dashboard/main_data.csv")
 
 st.title("Diagram Penyewaan Sepeda Tiap Musim dan Tahun")
 
