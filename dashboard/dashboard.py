@@ -27,11 +27,24 @@ if option == "Pinjaman Tiap Musim":
     season_usage = day_df.groupby("season", observed=False)[["registered", "casual"]].sum().reset_index()
     
     fig, ax = plt.subplots(figsize=(10, 6))
-    ax.bar(season_usage["season"], season_usage["registered"], label="Registered", color="blue")
-    ax.bar(season_usage["season"], season_usage["casual"], label="Casual", color="red", bottom=season_usage["registered"])
-    
-    ax.set_title("Jumlah Penyewaan Sepeda Berdasarkan Musim")
-    ax.legend()
+    plt.bar(
+    season_usage["season"],
+    season_usage["registered"],
+    label="Registered",
+    color="blue"
+    )
+
+    plt.bar(
+        season_usage["season"],
+        season_usage["casual"],
+        label="Casual",
+        color="red"
+    )
+
+    plt.xlabel(None)
+    plt.ylabel(None)
+    plt.title("Jumlah penyewaan sepeda berdasarkan musim")
+    plt.legend()
     st.pyplot(fig)
 
 elif option == "Performa Rental 2 Tahun":
@@ -39,8 +52,15 @@ elif option == "Performa Rental 2 Tahun":
     rent_year = day_df.groupby("yr", observed=False)[["cnt"]].sum().reset_index()
     
     fig, ax = plt.subplots(figsize=(10, 6))
-    ax.bar(rent_year["yr"], rent_year["cnt"], color="blue", label="Total Penyewaan")
-    
-    ax.set_title("Jumlah Penyewaan Sepeda Berdasarkan Tahun")
-    ax.legend()
+    plt.bar(
+    rent_year["yr"],
+    rent_year["cnt"],
+    color= "blue",
+    label="2011 - 2012"
+    )
+
+    plt.xlabel(None)
+    plt.ylabel(None)
+    plt.title("Jumlah Penyewaan Sepeda Berdasarkan Tahun")
+    plt.legend()
     st.pyplot(fig)
