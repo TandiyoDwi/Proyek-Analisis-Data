@@ -4,11 +4,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-day_df = pd.read_csv("dashboard/main_data.csv")
+# Load dataset
+day_df = pd.read_csv("../dashboard/main_data.csv")
 
 st.title("Diagram Penyewaan Sepeda Tiap Musim dan Tahun")
 
-# Merubah data
+# Mapping kategori data
 day_df['season'] = day_df['season'].map({
     1: 'Spring', 2: 'Summer', 3: 'Fall', 4: 'Winter'
 })
@@ -19,21 +20,37 @@ day_df['yr'] = day_df['yr'].map({
 day_df['season'] = day_df['season'].astype('category')
 day_df['yr'] = day_df['yr'].astype('category')
 
-# Sidebar
+day_df['dteday'] = pd.to_datetime(day_df['dteday'])  # Konversi ke tipe datetime
+
+# Sidebar Filter
 option = st.sidebar.selectbox("Pilih Data", ["Pinjaman Tiap Musim", "Performa Rental 2 Tahun"])
+season_filter = st.sidebar.selectbox("Filter berdasarkan musim:", ["All"] + list(day_df['season'].unique()))
+date_range = st.sidebar.date_input("Pilih rentang tanggal:", [day_df['dteday'].min(), day_df['dteday'].max()])
+
+# Menampilkan rentang tanggal yang dipilih
+st.write(f"**Rentang tanggal yang dipilih:** {date_range[0]} hingga {date_range[1]}")
 
 if option == "Pinjaman Tiap Musim":
     st.header("Pinjaman Sepeda Tiap Musim")
-    season_usage = day_df.groupby("season", observed=False)[["registered", "casual"]].sum().reset_index()
+    
+    # Filter data berdasarkan musim dan tanggal
+    filtered_df = day_df.copy()
+    if season_filter != "All":
+        filtered_df = filtered_df[filtered_df['season'] == season_filter]
+    
+    if len(date_range) == 2:
+        start_date, end_date = date_range
+        filtered_df = filtered_df[(filtered_df['dteday'] >= pd.to_datetime(start_date)) & (filtered_df['dteday'] <= pd.to_datetime(end_date))]
+    
+    season_usage = filtered_df.groupby("season", observed=False)[["registered", "casual"]].sum().reset_index()
     
     fig, ax = plt.subplots(figsize=(10, 6))
     plt.bar(
-    season_usage["season"],
-    season_usage["registered"],
-    label="Registered",
-    color="blue"
+        season_usage["season"],
+        season_usage["registered"],
+        label="Registered",
+        color="blue"
     )
-
     plt.bar(
         season_usage["season"],
         season_usage["casual"],
@@ -53,10 +70,10 @@ elif option == "Performa Rental 2 Tahun":
     
     fig, ax = plt.subplots(figsize=(10, 6))
     plt.bar(
-    rent_year["yr"],
-    rent_year["cnt"],
-    color= "blue",
-    label="2011 - 2012"
+        rent_year["yr"],
+        rent_year["cnt"],
+        color= "blue",
+        label="2011 - 2012"
     )
 
     plt.xlabel(None)
