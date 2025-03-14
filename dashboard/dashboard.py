@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Load dataset
-day_df = pd.read_csv("../dashboard/main_data.csv")
+day_df = pd.read_csv("dashboard/main_data.csv")
 
 st.title("Diagram Penyewaan Sepeda Tiap Musim dan Tahun")
 
@@ -20,20 +20,18 @@ day_df['yr'] = day_df['yr'].map({
 day_df['season'] = day_df['season'].astype('category')
 day_df['yr'] = day_df['yr'].astype('category')
 
-day_df['dteday'] = pd.to_datetime(day_df['dteday'])  # Konversi ke tipe datetime
+day_df['dteday'] = pd.to_datetime(day_df['dteday'])
 
-# Sidebar Filter
+# Sidebar 
 option = st.sidebar.selectbox("Pilih Data", ["Pinjaman Tiap Musim", "Performa Rental 2 Tahun"])
 season_filter = st.sidebar.selectbox("Filter berdasarkan musim:", ["All"] + list(day_df['season'].unique()))
 date_range = st.sidebar.date_input("Pilih rentang tanggal:", [day_df['dteday'].min(), day_df['dteday'].max()])
 
-# Menampilkan rentang tanggal yang dipilih
 st.write(f"**Rentang tanggal yang dipilih:** {date_range[0]} hingga {date_range[1]}")
 
 if option == "Pinjaman Tiap Musim":
     st.header("Pinjaman Sepeda Tiap Musim")
     
-    # Filter data berdasarkan musim dan tanggal
     filtered_df = day_df.copy()
     if season_filter != "All":
         filtered_df = filtered_df[filtered_df['season'] == season_filter]
